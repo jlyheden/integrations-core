@@ -6,6 +6,7 @@
 ### Changes
 
 * [IMPROVEMENT] Remove namespace from pod_name tag. See [#770][]
+* [IMPROVEMENT] Add custom tags to all service checks. See [#782][]
 
 1.4.0 / 2017-09-12
 ==================
@@ -100,4 +101,6 @@
 [#616]: https://github.com/DataDog/integrations-core/issues/616
 [#641]: https://github.com/DataDog/integrations-core/issues/641
 [#701]: https://github.com/DataDog/integrations-core/issues/701
+[#770]: https://github.com/DataDog/integrations-core/pull/770
+[#782]: https://github.com/DataDog/integrations-core/pull/782
 [@sophaskins]: https://github.com/sophaskins
