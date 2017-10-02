@@ -1,0 +1,16 @@
+{
+  "maintainer": "help@datadoghq.com",
+  "manifest_version": "0.1.0",
+  "max_agent_version": "6.0.0",
+  "min_agent_version": "5.15.0",
+  "name": "generic_prometheus",
+  "short_description": "generic_prometheus description.",
+  "guid": "fa0e4395-3eae-4df8-88f2-9d7075c21a2d",
+  "support": "contrib",
+  "supported_os": [
+    "linux",
+    "mac_os"
+  ],
+  "version": "0.1.0",
+  "use_omnibus_reqs": true
+}

@@ -1,0 +1,11 @@
+docker_images:
+
+init_config:
+
+instances:
+  - prometheus_metrics_url: http://%%host%%:%%port%%/metrics
+    # Tags are reported as set by kube-state-metrics. If you want to translate
+    # them to other tags, you can use the labels_mapper dictionary
+    # labels_mapper:
+    #   namespace: kube_namespace
+    # prometheus_metrics: [] <- list of prometheus metrics

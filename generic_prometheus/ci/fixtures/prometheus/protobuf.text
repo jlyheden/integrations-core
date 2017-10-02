@@ -1,0 +1,54 @@
+# HELP jvm_memory_max_bytes The maximum amount of memory in bytes that can be used for memory management
+# TYPE jvm_memory_max_bytes gauge
+jvm_memory_max_bytes{area="heap",id="PS Survivor Space",} 2.359296E7
+jvm_memory_max_bytes{area="heap",id="PS Old Gen",} 1.1267473408E10
+jvm_memory_max_bytes{area="heap",id="PS Eden Space",} 5.581570048E9
+jvm_memory_max_bytes{area="nonheap",id="Metaspace",} -1.0
+jvm_memory_max_bytes{area="nonheap",id="Code Cache",} 2.5165824E8
+jvm_memory_max_bytes{area="nonheap",id="Compressed Class Space",} 1.073741824E9
+# HELP http_client_requests_duration_seconds Timer of RestTemplate operation
+# TYPE http_client_requests_duration_seconds summary
+http_client_requests_duration_seconds_count{clientName="hello-provider",method="GET",status="200",uri="none",} 3.0
+http_client_requests_duration_seconds_sum{clientName="hello-provider",method="GET",status="200",uri="none",} 19.019666985
+# HELP http_server_requests_duration_seconds Timer of servlet request
+# TYPE http_server_requests_duration_seconds summary
+http_server_requests_duration_seconds_count{exception="None",method="GET",status="200",uri="/demo",} 3.0
+http_server_requests_duration_seconds_sum{exception="None",method="GET",status="200",uri="/demo",} 19.102380439999997
+# HELP jvm_buffer_memory_used_bytes An estimate of the memory that the Java virtual machine is using for this buffer pool
+# TYPE jvm_buffer_memory_used_bytes gauge
+jvm_buffer_memory_used_bytes{id="direct",} 57344.0
+jvm_buffer_memory_used_bytes{id="mapped",} 0.0
+# HELP logback_events_total Number of error level events that made it to the logs
+# TYPE logback_events_total counter
+logback_events_total{level="warn",} 0.0
+logback_events_total{level="debug",} 6358.0
+logback_events_total{level="error",} 0.0
+logback_events_total{level="trace",} 2399.0
+logback_events_total{level="info",} 223.0
+# HELP uptime_seconds The uptime of the Java virtual machine
+# TYPE uptime_seconds gauge
+uptime_seconds 1036.33
+# HELP jvm_buffer_total_capacity_bytes An estimate of the total capacity of the buffers in this pool
+# TYPE jvm_buffer_total_capacity_bytes gauge
+jvm_buffer_total_capacity_bytes{id="direct",} 57344.0
+jvm_buffer_total_capacity_bytes{id="mapped",} 0.0
+# HELP jvm_memory_used_bytes The amount of used memory
+# TYPE jvm_memory_used_bytes gauge
+jvm_memory_used_bytes{area="heap",id="PS Survivor Space",} 2.3586048E7
+jvm_memory_used_bytes{area="heap",id="PS Old Gen",} 2.6619336E7
+jvm_memory_used_bytes{area="heap",id="PS Eden Space",} 3.00842904E8
+jvm_memory_used_bytes{area="nonheap",id="Metaspace",} 5.2820192E7
+jvm_memory_used_bytes{area="nonheap",id="Code Cache",} 2.120192E7
+jvm_memory_used_bytes{area="nonheap",id="Compressed Class Space",} 6594280.0
+# HELP jvm_buffer_count An estimate of the number of buffers in the pool
+# TYPE jvm_buffer_count gauge
+jvm_buffer_count{id="direct",} 7.0
+jvm_buffer_count{id="mapped",} 0.0
+# HELP jvm_memory_committed_bytes The amount of memory in bytes that is committed for  the Java virtual machine to use
+# TYPE jvm_memory_committed_bytes gauge
+jvm_memory_committed_bytes{area="heap",id="PS Survivor Space",} 2.359296E7
+jvm_memory_committed_bytes{area="heap",id="PS Old Gen",} 4.7972352E8
+jvm_memory_committed_bytes{area="heap",id="PS Eden Space",} 9.65738496E8
+jvm_memory_committed_bytes{area="nonheap",id="Metaspace",} 5.4132736E7
+jvm_memory_committed_bytes{area="nonheap",id="Code Cache",} 2.1823488E7
+jvm_memory_committed_bytes{area="nonheap",id="Compressed Class Space",} 6946816.0
