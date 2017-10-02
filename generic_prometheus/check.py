@@ -3,13 +3,9 @@
 # Licensed under Simplified BSD License (see LICENSE)
 
 import re
-from collections import defaultdict
 
 from checks import CheckException
 from checks.prometheus_check import PrometheusCheck
-
-
-METRIC_TYPES = ['counter', 'gauge']
 
 
 class GenericPrometheus(PrometheusCheck):
@@ -21,7 +17,17 @@ class GenericPrometheus(PrometheusCheck):
         super(GenericPrometheus, self).__init__(name, init_config, agentConfig, instances)
         self.NAMESPACE = 'generic_prometheus'
 
+        # generic prometheus -> datadog metrics translation table
         self.metrics_mapper = self._instances_to_metrics_mapper(instances)
+
+        # instance specific metrics collection
+        self.instance_metrics = self._instance_metrics(instances)
+
+    def _instance_metrics(self, instances):
+        kv = {}
+        for instance in instances:
+            kv[instance.get('prometheus_metrics_url')] = instance.get('prometheus_metrics')
+        return kv
 
     def _instances_to_metrics_mapper(self, instances):
         kv = {}
@@ -43,71 +49,27 @@ class GenericPrometheus(PrometheusCheck):
             if isinstance(instance['labels_mapper'], dict):
                 self.labels_mapper = instance['labels_mapper']
             else:
-                self.log.warning("labels_mapper should be a dictionnary")
+                self.log.warning("labels_mapper should be a dictionary")
 
         self.process(endpoint, send_histograms_buckets=False, instance=instance)
 
-    def _condition_to_service_check(self, metric, sc_name, mapping, tags=None):
+    def process_metric(self, message, send_histograms_buckets=True, custom_tags=None, **kwargs):
         """
-        Some metrics contains conditions, labels that have "condition" as name and "true", "false", or "unknown"
-        as value. The metric value is expected to be a gauge equal to 0 or 1 in this case.
-        For example:
+        patch parent method to look up valid metrics from instance
 
-        metric {
-          label { name: "condition", value: "true"
-          }
-          # other labels here
-          gauge { value: 1.0 }
-        }
+        Handle a prometheus metric message according to the following flow:
+            - search self.metrics_mapper for a prometheus.metric <--> datadog.metric mapping
+            - call check method with the same name as the metric
+            - log some info if none of the above worked
 
-        This function evaluates metrics containing conditions and sends a service check
-        based on a provided condition->check mapping dict
+        `send_histograms_buckets` is used to specify if yes or no you want to send the buckets as tagged values when dealing with histograms.
         """
-        if bool(metric.gauge.value) is False:
-            return  # Ignore if gauge is not 1
-        for label in metric.label:
-            if label.name == 'condition':
-                if label.value in mapping:
-                    self.service_check(sc_name, mapping[label.value], tags=tags)
-                else:
-                    self.log.debug("Unable to handle %s - unknown condition %s" % (sc_name, label.value))
-
-    def _extract_label_value(self, name, labels):
-        """
-        Search for `name` in labels name and returns
-        corresponding value.
-        Returns None if name was not found.
-        """
-        for label in labels:
-            if label.name == name:
-                return label.value
-        return None
-
-    def _format_tag(self, name, value):
-        """
-        Lookups the labels_mapper table to see if replacing the tag name is
-        necessary, then returns a "name:value" tag string
-        """
-        return '%s:%s' % (self.labels_mapper.get(name, name), value)
-
-    def _label_to_tag(self, name, labels, tag_name=None):
-        """
-        Search for `name` in labels name and returns corresponding tag string.
-        Tag name is label name if not specified.
-        Returns None if name was not found.
-        """
-        value = self._extract_label_value(name, labels)
-        if value:
-            return self._format_tag(tag_name or name, value)
-        else:
-            return None
-
-    def _trim_job_tag(self, name):
-        """
-        Trims suffix of job names if they match -(\d{4,10}$)
-        """
-        pattern = "(-\d{4,10}$)"
-        return re.sub(pattern, '', name)
-
-    # Labels attached: namespace, pod, phase=Pending|Running|Succeeded|Failed|Unknown
-    # The phase gets not passed through; rather, it becomes the service check suffix.
+        try:
+            instance = kwargs.get("instance")
+            instance_url = instance.get('prometheus_metrics_url')
+            if message.name in self.instance_metrics[instance_url]:
+                self._submit_metric(self.metrics_mapper[message.name], message, send_histograms_buckets, custom_tags)
+            else:
+                getattr(self, message.name)(message, **kwargs)
+        except AttributeError as err:
+            self.log.debug("Unable to handle metric: {} - error: {}".format(message.name, err))
